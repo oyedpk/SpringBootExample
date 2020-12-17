@@ -2,6 +2,7 @@ package com.example.kafkaexample;
 
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.EnableKafka;
@@ -17,10 +18,16 @@ import java.util.Map;
 @EnableKafka
 public class KafkaConsumerConfig {
 
+    //@EnableKafka annotation is required on the configuration class to enable detection of
+    //@KafkaListener annotation on spring managed beans
+
+    @Value( value = "${kafka.bootstrapAddress}")
+    private String bootstrapAddress;
+
     @Bean
     public ConsumerFactory<String,String> consumerFactory() {
         Map<String,Object> configProps = new HashMap<>();
-        configProps.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,"localhost:9091");
+        configProps.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,bootstrapAddress);
         configProps.put(ConsumerConfig.GROUP_ID_CONFIG, "group-id");
         configProps.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringSerializer.class);
         configProps.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringSerializer.class);
